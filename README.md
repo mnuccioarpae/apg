@@ -1,17 +1,15 @@
-# README for PGCLI3 #
+# README for PGCLI #
 
 PGCLI is a PrettyGoodCommandLine interface for component control 
   and management in PostgreSQL environments.  
 
 ## Usage ##
 ```
-#!
 pgc command [component] [options]
 ```
 
 ## Informational Commands ##
 ```
-#!
   help      - Display help file
   info      - Display OS or component information
   status    - Display status of installed server components
@@ -20,7 +18,6 @@ pgc command [component] [options]
 
 ## Service Control Commands ##
 ```
-#!
   start     - Start server components
   stop      - Stop server components
   reload    - Reload server configuration files (without a restart)
@@ -33,7 +30,6 @@ pgc command [component] [options]
 
 ## Software Install & Update Commands ##
 ```
-#!
   update    - Retrieve new lists of components
   upgrade   - Perform an upgrade of a component
   install   - Install (or re-install) a component  
@@ -44,7 +40,6 @@ pgc command [component] [options]
 
 ## Advanced Internal Commands ##
 ```
-#!
   top        - Cross platform version of the "top" command 
   get        - Retrieve a setting
   set        - Populate a setting
