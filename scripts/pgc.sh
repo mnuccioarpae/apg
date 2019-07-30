@@ -64,4 +64,8 @@ else
  fi
 fi
 
+if [ -f /usr/lib64/perl5/CORE/libperl.so ]; then 
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64/perl5/CORE 
+fi
+
 $PYTHON -u "$PGC_HOME/hub/scripts/pgc.py" "$@"
