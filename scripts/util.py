@@ -1016,11 +1016,20 @@ def update_postgresql_conf(p_pgver, p_port, is_new=True,update_listen_addr=True)
 
 def get_superuser_passwd():
   print (" ")
+
+  passwd = "password"
+  prompt = "Superuser Password [" + passwd + "]: "  
+
+  isYes = str(os.getenv("isYes", "False"))
+  if isYes == "True":
+    print(prompt + "<cr>")
+    return(passwd)
+
   try:
     while True:
-      pg_pass1 = getpass.getpass(str("Superuser Password [password]: "))
+      pg_pass1 = getpass.getpass(prompt)
       if pg_pass1.strip() == "":
-        pg_pass1 = "password"
+        pg_pass1 = passwd
         break
       pg_pass2 = getpass.getpass(str("Confirm Password: "))
       if pg_pass1 == pg_pass2:
