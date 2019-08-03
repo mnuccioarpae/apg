@@ -4,7 +4,7 @@ from __future__ import print_function, division
 ##########     Copyright (c) 2015-2019 BigSQL      ###############
 ##################################################################
 
-PGC_VERSION = "4.1.8"
+PGC_VERSION = "4.1.9"
 
 from subprocess import Popen, PIPE, STDOUT
 from datetime import datetime, timedelta
