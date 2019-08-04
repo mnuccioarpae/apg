@@ -72,6 +72,13 @@ def run_sql_cmd(p_pg, p_sql, p_display=False):
 def create_extension(p_pg, p_ext, p_reboot):
   import time
 
+  print("\n install-" + p_ext + "-" + p_pg + "...")
+
+  change_pgconf_keyval(p_pg, "shared_preload_libraries", p_ext)
+
+  if not p_reboot:
+    return(0)
+
   print("")
   run_pgc_cmd (p_pg + os.sep + "stop-" + p_pg + ".py", False )
   time.sleep(2)
@@ -827,8 +834,7 @@ def put_pgconf(p_pgver, p_conf):
 
 ## remove a single line in the postgresql.conf file #######################
 def remove_pgconf_keyval(p_pgver, p_key, p_val=""):
-
-  print("   Removing from postgresql.conf file:")
+  print("\n   Removing from postgresql.conf file:")
   s = get_pgconf(p_pgver)
 
   ns = ""
