@@ -47,6 +47,34 @@ PGC_HOME = os.getenv('PGC_HOME', '..' + os.sep + '..')
 pid_file = os.path.join(PGC_HOME, 'conf', 'pgc.pid')
 
 
+def run_pgc_cmd (p_cmd, p_display):
+  cmd = PGC_HOME + os.sep + "pgc " + p_cmd
+
+  if p_display:
+    print (cmd)
+
+  rc=os.system(sys.executable + ' -u ' + cmd)
+  return(rc)
+
+def run_sql_cmd(p_pg, p_sql):
+  print ('DEBUG:  psql -c "' + p_sql + '"')
+  return (0)
+
+
+def create_extension(p_pg, p_ext, p_reboot):
+  print ("DEBUG: create_extension(" + p_pg + "," + p_ext + "," + p_reboot + ")")
+
+  ## ensure that we are running
+  run_pgc_cmd ("start " + p_pg, True )
+  os.sleep(5)
+
+  run_sql_cmd (p_pg, "CREATE EXTENSION " + p_ext + ";")
+
+  run_pgc_cmd ("restart " + p_pg, True)
+
+  return(0)
+
+
 def create_virtualenv():
   # rc = system(PIP + " install --user virtualenv" , is_display=True)
   # return(rc)
