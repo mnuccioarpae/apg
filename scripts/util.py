@@ -47,30 +47,39 @@ PGC_HOME = os.getenv('PGC_HOME', '..' + os.sep + '..')
 pid_file = os.path.join(PGC_HOME, 'conf', 'pgc.pid')
 
 
-def run_pgc_cmd (p_cmd, p_display):
-  cmd = PGC_HOME + os.sep + "pgc " + p_cmd
+def run_pgc_cmd (p_cmd, p_display=False):
+  cmd = PGC_HOME + os.sep + p_cmd
 
   if p_display:
-    print (cmd)
+    print ("  " + cmd)
 
-  rc=os.system(sys.executable + ' -u ' + cmd)
+  rc = os.system(sys.executable + ' -u ' + cmd)
   return(rc)
 
-def run_sql_cmd(p_pg, p_sql):
-  print ('DEBUG:  psql -c "' + p_sql + '"')
-  return (0)
+
+def run_sql_cmd(p_pg, p_sql, p_display=False):
+  cmd = 'psql -U postgres -c "' + p_sql + '"'
+  cmd = os.path.join(p_pg, "bin", cmd)
+
+  if p_display:
+    print ("$ " + cmd)
+
+  cmd = os.path.join(PGC_HOME, cmd)
+  rc = os.system(cmd)
+  return(rc)
 
 
 def create_extension(p_pg, p_ext, p_reboot):
-  print ("DEBUG: create_extension(" + p_pg + "," + p_ext + "," + p_reboot + ")")
+  import time
 
-  ## ensure that we are running
-  run_pgc_cmd ("start " + p_pg, True )
-  os.sleep(5)
+  print("")
+  run_pgc_cmd (p_pg + os.sep + "stop-" + p_pg + ".py", False )
+  time.sleep(2)
+  run_pgc_cmd (p_pg + os.sep + "start-" + p_pg + ".py", False )
+  time.sleep(3)
 
-  run_sql_cmd (p_pg, "CREATE EXTENSION " + p_ext + ";")
-
-  run_pgc_cmd ("restart " + p_pg, True)
+  print("")
+  run_sql_cmd (p_pg, "CREATE EXTENSION " + p_ext, True)
 
   return(0)
 
