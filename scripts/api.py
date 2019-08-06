@@ -365,7 +365,7 @@ def info(p_json, p_home, p_repo, print_flag=True):
   print(style_start + ("#" * 70) + style_end)
   print(style_start + "#             PGC: " + style_end + "v" + ver + "  " + p_home)
   print(style_start + "#     User & Host: " + style_end + p_user + admin_display + "  " + host_display)
-  print(style_start + "#              OS: " + style_end + os.rstrip())
+  print(style_start + "#              OS: " + style_end + os.rstrip() + " - " + str(plat))
   print(style_start + "#    Python & PIP: " + style_end + python_ver + " | " + pip_ver)
   print(style_start + "#        Hardware: " + style_end + mem + ", " + cores + " " + cpu)
 

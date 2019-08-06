@@ -470,9 +470,11 @@ def verify(p_json):
       else:
         if "win" in plat:
           verify_comp(comp_ver + "-win64")
-        if "osx" in plat:
+        elif "osx" in plat:
           verify_comp(comp_ver + "-osx64")
-        if "linux" in plat:
+        elif "alpine" in plat:
+          verify_comp(comp_ver + "-alpine64")
+        elif "linux" in plat:
           verify_comp(comp_ver + "-linux64")
   except Exception as e:
     fatal_sql_error(e,sql,"verify()")
@@ -1556,10 +1558,13 @@ def get_os():
 
     if os.path.exists("/etc/system-release"):
       ## Amazon Linux
-      return "el6"
+      return "el7"
 
     if os.path.exists("/etc/lsb-release"):
       return(getoutput("cat /etc/lsb-release | grep DISTRIB_CODENAME | cut -d= -f2"))
+
+    if os.path.exists("/etc/os-release"):
+      return "alpine"
 
   except Exception as e:
     pass
