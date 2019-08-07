@@ -58,7 +58,8 @@ def run_pgc_cmd (p_cmd, p_display=False):
 
 
 def run_sql_cmd(p_pg, p_sql, p_display=False):
-  cmd = 'psql -U postgres -c "' + p_sql + '"'
+  port = get_column("port", p_pg)
+  cmd = 'psql -U postgres -p ' + str(port) + ' -c "' + p_sql + '"'
   cmd = os.path.join(p_pg, "bin", cmd)
 
   if p_display:
