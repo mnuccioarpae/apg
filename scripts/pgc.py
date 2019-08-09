@@ -82,7 +82,7 @@ mode_list = ["start", "stop", "restart", "status", "list", "info", "update",
              "repolist", "repo-pkgs", "discover", 
              "register", "top", "--autostart", "--relnotes",
              "--help", "--json", "--test", "--extra", "--extensions",
-             "--list", "--old", "--showduplicates", "-y", "-t",
+             "--list", "--old", "--showduplicates", "-y", "-t", "-d"  ,
              "--verbose", "--debug", "--debug2"]
 
 mode_list_advanced = ['kill', 'config', 'deplist', 'download', 'cancel',
@@ -1190,6 +1190,19 @@ if "-t" in args:
   isTIME = True
   args.remove("-t")
   os.environ['isTime'] = "True"
+
+PGNAME = ""
+i = 0
+while i < len(args):
+  arg = args[i]
+  if arg == "-d":
+    if i < (len(args) - 1):
+      PGNAME = args[i + 1]
+      os.environ['pgName'] = PGNAME
+      args.remove(PGNAME)
+      args.remove("-d")
+      break
+  i += 1
 
 isTEST = False
 if "--test" in args:

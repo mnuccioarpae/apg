@@ -70,14 +70,17 @@ def run_sql_cmd(p_pg, p_sql, p_display=False):
   return(rc)
 
 
-def create_extension(p_pg, p_ext, p_reboot):
+def create_extension(p_pg, p_ext, p_reboot=False):
   import time
 
   print("\n install-" + p_ext + "-" + p_pg + "...")
 
   change_pgconf_keyval(p_pg, "shared_preload_libraries", p_ext)
 
-  if not p_reboot:
+  isYES = str(os.getenv("isYes", "False"))
+  if isYES == "True":
+    pass
+  else:
     return(0)
 
   print("")
@@ -1066,9 +1069,9 @@ def get_superuser_passwd():
   passwd = "password"
   prompt = "Superuser Password [" + passwd + "]: "  
 
-  isYes = str(os.getenv("isYes", "False"))
-  if isYes == "True":
-    print(prompt + "<cr>")
+  isYES = str(os.getenv("isYes", "False"))
+  if isYES == "True":
+    print(prompt)
     return(passwd)
 
   try:
