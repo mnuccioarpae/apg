@@ -38,7 +38,6 @@ if os.path.exists(platform_lib_path):
   if platform_lib_path not in sys.path:
     sys.path.append(platform_lib_path)
 
-
 import semver
 import pgclog
 
@@ -60,6 +59,11 @@ def run_pgc_cmd (p_cmd, p_display=False):
 def run_sql_cmd(p_pg, p_sql, p_display=False):
   port = get_column("port", p_pg)
   cmd = 'psql -U postgres -p ' + str(port) + ' -c "' + p_sql + '"'
+
+  db = os.getenv("pgName", "")
+  if db > "":
+    cmd = cmd + "  " + str(db)
+
   cmd = os.path.join(p_pg, "bin", cmd)
 
   if p_display:
@@ -77,17 +81,12 @@ def create_extension(p_pg, p_ext, p_reboot=False):
 
   change_pgconf_keyval(p_pg, "shared_preload_libraries", p_ext)
 
-  isYES = str(os.getenv("isYes", "False"))
-  if isYES == "True":
-    pass
-  else:
-    return(0)
-
-  print("")
-  run_pgc_cmd (p_pg + os.sep + "stop-" + p_pg + ".py", False )
-  time.sleep(2)
-  run_pgc_cmd (p_pg + os.sep + "start-" + p_pg + ".py", False )
-  time.sleep(3)
+  if p_reboot:
+    print("")
+    run_pgc_cmd (p_pg + os.sep + "stop-" + p_pg + ".py", False )
+    time.sleep(3)
+    run_pgc_cmd (p_pg + os.sep + "start-" + p_pg + ".py", False )
+    time.sleep(4)
 
   print("")
   run_sql_cmd (p_pg, "CREATE EXTENSION " + p_ext, True)
