@@ -74,7 +74,7 @@ def run_sql_cmd(p_pg, p_sql, p_display=False):
   return(rc)
 
 
-def create_extension(p_pg, p_ext, p_reboot=False):
+def create_extension(p_pg, p_ext, p_reboot=False, p_extension=""):
   import time
 
   print("\n install-" + p_ext + "-" + p_pg + "...")
@@ -89,7 +89,9 @@ def create_extension(p_pg, p_ext, p_reboot=False):
     time.sleep(4)
 
   print("")
-  run_sql_cmd (p_pg, "CREATE EXTENSION " + p_ext, True)
+  if p_extension == "":
+    p_extension = p_ext
+  run_sql_cmd (p_pg, "CREATE EXTENSION " + p_extension, True)
 
   return(0)
 
