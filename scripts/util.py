@@ -1063,6 +1063,37 @@ def update_postgresql_conf(p_pgver, p_port, is_new=True,update_listen_addr=True)
 
   return
 
+def tune_postgresql_conf(p_pgver):
+  print("\n########## tune_postgresql_conf(" + p_pgver + ") ###########")
+
+  mem_kb = int(getoutput("cat /proc/meminfo | awk '/MemTotal/ {print $2}'"))
+  mem_mb = int(mem_kb / 1024)
+  print("# Available Memory = " + str(mem_mb) + " MB")
+
+  s = get_pgconf(p_pgver)
+  ns = ""
+  lines = s.split('\n')
+  for line in lines:
+    if line.startswith("shared_buffers") or line.startswith("#shared_buffers"):
+      print(line)
+
+    elif line.startswith("work_mem") or line.startswith("#work_mem"):
+      print(line)
+
+    elif line.startswith("maintenance_work_mem") or line.startswith("#maintenance_work_mem"):
+      print(line)
+
+    elif line.startswith("effective_cache_size") or line.startswith("#effective_cache_size"):
+      print(line)
+
+    else:
+      if ns == "":
+        ns = line
+      else:
+        ns = ns + "\n" + line
+
+#  put_pgconf(p_pgver, ns)
+
 
 def get_superuser_passwd():
   print (" ")

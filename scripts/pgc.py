@@ -77,7 +77,7 @@ ansi_escape = re.compile(r'\x1b[^m]*m')
 
 dep9 = util.get_depend()
 mode_list = ["start", "stop", "restart", "status", "list", "info", "update",
-             "upgrade", "enable", "disable", "install",
+             "upgrade", "enable", "disable", "install", "tune",
              "remove", "reload", "activity", "help", "get", "set", "unset",
              "repolist", "repo-pkgs", "discover", 
              "register", "top", "--autostart", "--relnotes",
@@ -2031,6 +2031,15 @@ try:
       exit_cleanly(startup.useradd_linux(args[2]))
     else:
       print("ERROR: The USERADD command must have 1 parameter (svcuser).")
+      exit_cleanly(1)
+
+
+  ## TUNE ###############################################
+  if p_mode == 'tune':
+    if len(args) == 3:
+      exit_cleanly(util.tune_postgresql_conf(args[2]))
+    else:
+      print("ERROR: The TUNE command must have 1 parameter (pgver).")
       exit_cleanly(1)
 
 
