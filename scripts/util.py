@@ -1076,15 +1076,30 @@ def tune_postgresql_conf(p_pgver):
   for line in lines:
     if line.startswith("shared_buffers") or line.startswith("#shared_buffers"):
       print(line)
+      shared_buf_mb = int(mem_mb / 4)
+      shared_buf = "shared_buffers = " + str(shared_buf_mb) + "MB"
+      print(shared_buf + "\n")
+      ns = ns + "\n" + shared_buf
 
     elif line.startswith("work_mem") or line.startswith("#work_mem"):
       print(line)
+      work_mem = "work_mem = 64MB"
+      print(work_mem + "\n")
+      ns = ns + "\n" + work_mem
 
     elif line.startswith("maintenance_work_mem") or line.startswith("#maintenance_work_mem"):
       print(line)
+      maint_mb = int(mem_mb / 10)
+      maint_buf = "maintenance_work_mem = " + str(maint_mb) + "MB"
+      print(maint_buf + "\n")
+      ns = ns + "\n" + maint_buf
 
     elif line.startswith("effective_cache_size") or line.startswith("#effective_cache_size"):
       print(line)
+      cache_mb = int(mem_mb / 2)
+      cache_size = "effective_cache_size = " + str(cache_mb) + "MB"
+      print(cache_size + "\n")
+      ns = ns + "\n" + cache_size
 
     else:
       if ns == "":
@@ -1092,7 +1107,7 @@ def tune_postgresql_conf(p_pgver):
       else:
         ns = ns + "\n" + line
 
-#  put_pgconf(p_pgver, ns)
+  put_pgconf(p_pgver, ns)
 
 
 def get_superuser_passwd():
