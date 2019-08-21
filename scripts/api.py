@@ -278,9 +278,10 @@ def info(p_json, p_home, p_repo, print_flag=True):
     prod_version = util.getoutput("sw_vers -productVersion")
     this_os = prod_name + " " + prod_version
   elif this_uname == "Linux":
-    system_memory_in_kbytes = int(util.getoutput("cat /proc/meminfo | awk '/MemTotal/ {print $2}'"))
-    system_memory_in_gb = system_memory_in_kbytes / 1024.0 / 1024.0
-    system_cpu_cores=int(util.getoutput("egrep -c 'processor([[:space:]]+):.*' /proc/cpuinfo"))
+    mem_mb = util.get_mem_mb()
+    system_memory_in_kbytes = mem_mb * 1024
+    system_memory_in_gb = mem_mb / 1024.0
+    system_cpu_cores = util.get_cpu_cores()
     cpu_model=util.getoutput("grep 'model name' /proc/cpuinfo | head -1 | cut -d':' -f2")
     if os.path.exists("/etc/redhat-release"):
       this_os = util.getoutput("cat /etc/redhat-release")

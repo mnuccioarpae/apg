@@ -1063,12 +1063,20 @@ def update_postgresql_conf(p_pgver, p_port, is_new=True,update_listen_addr=True)
 
   return
 
-def tune_postgresql_conf(p_pgver):
-  print("\n########## tune_postgresql_conf(" + p_pgver + ") ###########")
 
+def get_cpu_cores():
+  cpu_cores = int(getoutput("egrep -c 'processor([[:space:]]+):.*' /proc/cpuinfo"))
+  return(cpu_cores)
+
+
+def get_mem_mb():
   mem_kb = int(getoutput("cat /proc/meminfo | awk '/MemTotal/ {print $2}'"))
   mem_mb = int(mem_kb / 1024)
-  print("# Available Memory = " + str(mem_mb) + " MB")
+  return(mem_mb)
+
+
+def tune_postgresql_conf(p_pgver):
+  mem_mb = get_mem_mb()
 
   s = get_pgconf(p_pgver)
   ns = ""
@@ -1601,15 +1609,11 @@ def get_os():
 
   try:
     if os.path.exists("/etc/redhat-release"):
-      ver = read_file_string("/etc/redhat-release").split()[3]
-      if ver.startswith("7"):
-        return "el7"
-      else:
-        return "el6"
+      return "el"
 
     if os.path.exists("/etc/system-release"):
       ## Amazon Linux
-      return "el7"
+      return "el"
 
     if os.path.exists("/etc/lsb-release"):
       return(getoutput("cat /etc/lsb-release | grep DISTRIB_CODENAME | cut -d= -f2"))
@@ -1620,7 +1624,7 @@ def get_os():
   except Exception as e:
     pass
 
-  return ("linux")
+  return ("el")
 
 
 
