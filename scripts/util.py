@@ -1085,6 +1085,8 @@ def tune_postgresql_conf(p_pgver):
     if line.startswith("shared_buffers") or line.startswith("#shared_buffers"):
       print(line)
       shared_buf_mb = int(mem_mb / 4)
+      if shared_buf_mb > 8192:
+        shared_buf_mb = 8192
       shared_buf = "shared_buffers = " + str(shared_buf_mb) + "MB"
       print(shared_buf + "\n")
       ns = ns + "\n" + shared_buf
