@@ -1598,33 +1598,35 @@ def get_platform():
 
 
 ####################################################################################
-# returns the OS (osx, win, el6, el7, xenial, precise, trusty...)
+# returns the OS
 ####################################################################################
 def get_os():
   if platform.system() == "Darwin":
-    return ("osx")
+    return ("osx64")
 
   if platform.system() == "Windows":
-    return ("win")
+    return ("win64")
 
   try:
     if os.path.exists("/etc/redhat-release"):
-      return "el"
+      ## centos & fedora
+      return "linux64"
 
     if os.path.exists("/etc/system-release"):
-      ## Amazon Linux
-      return "el"
+      ## amazon linux
+      return "linux64"
 
     if os.path.exists("/etc/lsb-release"):
-      return(getoutput("cat /etc/lsb-release | grep DISTRIB_CODENAME | cut -d= -f2"))
+      ## ubuntu
+      return "linux64"
 
     if os.path.exists("/etc/os-release"):
-      return "alpine"
+      return "alpine64"
 
   except Exception as e:
     pass
 
-  return ("el")
+  return ("linux64")
 
 
 
