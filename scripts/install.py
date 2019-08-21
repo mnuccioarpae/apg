@@ -3,7 +3,7 @@
 ##################################################################
 
 import sys, os
-PGC_VER="4.2.1"
+PGC_VER="4.2.2"
 PGC_REPO=os.getenv("PGC_REPO", "https://s3.amazonaws.com/pgcentral")
 
 env_ver_pgc = os.getenv("PGC_VER", None)
