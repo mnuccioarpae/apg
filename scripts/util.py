@@ -77,7 +77,7 @@ def run_sql_cmd(p_pg, p_sql, p_display=False):
 def create_extension(p_pg, p_ext, p_reboot=False, p_extension=""):
   import time
 
-  print("\n install-" + p_ext + "-" + p_pg + "...")
+  print("\ninstall-" + p_ext + "-" + p_pg + ":")
 
   change_pgconf_keyval(p_pg, "shared_preload_libraries", p_ext)
 
@@ -839,9 +839,7 @@ def put_pgconf(p_pgver, p_conf):
   return
 
 
-## remove a single line in the postgresql.conf file #######################
 def remove_pgconf_keyval(p_pgver, p_key, p_val=""):
-  print("\n   Removing from postgresql.conf file:")
   s = get_pgconf(p_pgver)
 
   ns = ""
@@ -850,13 +848,13 @@ def remove_pgconf_keyval(p_pgver, p_key, p_val=""):
   lines = s.split('\n')
   for line in lines:
     if line.startswith(p_key):
-      print("     old: " + line)
+      print("  old: " + line)
       if p_val == "":
         ## skip over this line and continue processing the rest of the file
         continue
       else:
         new_line = remove_line_val(line, p_val)
-        print("     new: " + new_line)
+        print("  new: " + new_line + "\n")
         ns = ns + "\n" + new_line
     else:
       if ns == "":
@@ -869,7 +867,6 @@ def remove_pgconf_keyval(p_pgver, p_key, p_val=""):
   return
 
 
-## return a list of tokens of the comma seperated values between the tick marks ###
 def get_val_tokens(p_line):
   comment_pos = p_line.find("#", 1)
   if comment_pos > 0:
@@ -886,7 +883,6 @@ def get_val_tokens(p_line):
   return(old_val.split())
 
 
-## remove p_val from the comma separated string inside of p_line ##################
 def remove_line_val(p_line, p_val):
   old_tokens = get_val_tokens(p_line)
 
@@ -900,7 +896,6 @@ def remove_line_val(p_line, p_val):
   return(assemble_line_val(p_line, new_tokens))
 
 
-## build up a new key-value line ################################################
 def assemble_line_val(p_old_line, p_new_tokens, p_val=""):
   tokens = p_old_line.split()
   key = tokens[0]
@@ -924,7 +919,6 @@ def assemble_line_val(p_old_line, p_new_tokens, p_val=""):
   return(new_line)
 
 
-## append a value to a comma seperated list ####################################
 def append_val(p_base, p_val):
   if p_base == "":
     return(p_val)
@@ -935,10 +929,7 @@ def append_val(p_base, p_val):
   return(p_base + "," + p_val)
 
 
-## change a single line in the postgresql.conf file #############################
 def change_pgconf_keyval(p_pgver, p_key, p_val, p_replace=False):
-
-  print("   Updating postgresql.conf file:")
   s = get_pgconf(p_pgver)
 
   ns = ""
@@ -952,7 +943,7 @@ def change_pgconf_keyval(p_pgver, p_key, p_val, p_replace=False):
       boolFoundLine = True
 
       old_line = line
-      print("     old: " + old_line)
+      print("  old: " + old_line)
 
       if p_replace:
         old_line = p_key + " = ''"
@@ -971,7 +962,7 @@ def change_pgconf_keyval(p_pgver, p_key, p_val, p_replace=False):
     new_line = p_key + " = '" + p_val + "'"
     ns = ns + "\n" + new_line + "\n"
 
-  print("     new: " + new_line)
+  print("  new: " + new_line + " \n")
 
   put_pgconf(p_pgver, ns)
 
@@ -1076,6 +1067,7 @@ def get_mem_mb():
 
 
 def tune_postgresql_conf(p_pgver):
+  print("Tuning 'postgresl.conf' parms for '" + p_pgver + "':")
   mem_mb = get_mem_mb()
 
   s = get_pgconf(p_pgver)
@@ -1083,32 +1075,32 @@ def tune_postgresql_conf(p_pgver):
   lines = s.split('\n')
   for line in lines:
     if line.startswith("shared_buffers") or line.startswith("#shared_buffers"):
-      print(line)
+      print("  old: " + line)
       shared_buf_mb = int(mem_mb / 4)
       if shared_buf_mb > 8192:
         shared_buf_mb = 8192
       shared_buf = "shared_buffers = " + str(shared_buf_mb) + "MB"
-      print(shared_buf + "\n")
+      print("  new: " + shared_buf + "\n")
       ns = ns + "\n" + shared_buf
 
     elif line.startswith("work_mem") or line.startswith("#work_mem"):
-      print(line)
+      print("  old: " + line)
       work_mem = "work_mem = 64MB"
-      print(work_mem + "\n")
+      print("  new: " + work_mem + "\n")
       ns = ns + "\n" + work_mem
 
     elif line.startswith("maintenance_work_mem") or line.startswith("#maintenance_work_mem"):
-      print(line)
+      print("  old: " + line)
       maint_mb = int(mem_mb / 10)
       maint_buf = "maintenance_work_mem = " + str(maint_mb) + "MB"
-      print(maint_buf + "\n")
+      print("  new: " + maint_buf + "\n")
       ns = ns + "\n" + maint_buf
 
     elif line.startswith("effective_cache_size") or line.startswith("#effective_cache_size"):
-      print(line)
+      print("  old: " + line)
       cache_mb = int(mem_mb / 2)
       cache_size = "effective_cache_size = " + str(cache_mb) + "MB"
-      print(cache_size + "\n")
+      print("  new: " + cache_size + "\n")
       ns = ns + "\n" + cache_size
 
     else:
