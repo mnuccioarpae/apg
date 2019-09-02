@@ -3,13 +3,8 @@
 ##################################################################
 
 import sys, os
-PGC_VER="4.2.2"
+PGC_VER="4.3.0"
 PGC_REPO=os.getenv("PGC_REPO", "https://s3.amazonaws.com/pgcentral")
-
-env_ver_pgc = os.getenv("PGC_VER", None)
-if env_ver_pgc:
-  PGC_VER = env_ver_pgc
-  print("Using PGC_VER Environment Variable: " + PGC_VER)
   
 if sys.version_info < (2, 6):
   print("ERROR: BigSQL requires Python 2.6 or greater")
@@ -61,10 +56,6 @@ except Exception as e:
 print("\nSetting REPO to " + PGC_REPO)
 pgc_cmd = "bigsql" + os.sep + "pgc"
 os.system(pgc_cmd + " set GLOBAL REPO " + PGC_REPO)
-
-if not env_ver_pgc:
-  print("\nUpdating Metadata")
-  os.system(pgc_cmd + " update --silent")
 
 print("\nBigSQL PGC installed.  Try '" + pgc_cmd + " help' to get started.\n")
 
