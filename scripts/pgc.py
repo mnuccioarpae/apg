@@ -1129,7 +1129,7 @@ if len(args) == 1:
   exit_cleanly(0)
 
 if ((args[1] == "--version") or (args[1] == "-v")):
-  api.info(False, PGC_HOME, REPO)
+  print("v" + util.get_pgc_version())
   exit_cleanly(0)
 
 p_mode = ""
