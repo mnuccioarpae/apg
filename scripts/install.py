@@ -3,7 +3,7 @@
 ##################################################################
 
 import sys, os
-PGC_VER="4.3.0"
+PGC_VER="4.3.1"
 PGC_REPO=os.getenv("PGC_REPO", "https://s3.amazonaws.com/pgcentral")
   
 if sys.version_info < (2, 6):
