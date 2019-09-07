@@ -1870,10 +1870,9 @@ def http_get_file(p_json, p_file_name, p_url, p_out_dir, p_display_status, p_msg
         file_size = int(meta.get_all("Content-Length")[0])
     else:
         file_size = int(meta.getheaders("Content-Length")[0])
+
     file_size_dl = 0
     block_sz = 8192
-    old_pct = 0
-    old_size = 0
     f = open(file_name_partial,"wb")
     file_exists = True
     log_file_name = p_file_name.replace(".tar.bz2",'')
@@ -1900,7 +1899,8 @@ def http_get_file(p_json, p_file_name, p_url, p_out_dir, p_display_status, p_msg
       file_size_dl_mb = int(file_size_dl / 1024 / 1024)
       download_pct = int(file_size_dl * 100 / file_size)
       if p_display_status:
-        if (old_size > 1) and (file_size_dl_mb != old_size) and (10 % old_size == 0):
+        my_modulo = (file_size_dl % (1024 * 1024 * 10))
+        if (file_size_dl_mb > 1) and (my_modulo == 0):
           if p_json:
             json_dict['status'] = "wip"
             json_dict['mb'] = get_file_size(file_size_dl)
@@ -1910,16 +1910,13 @@ def http_get_file(p_json, p_file_name, p_url, p_out_dir, p_display_status, p_msg
               json_dict['component'] = component_name
             print (json.dumps([json_dict]))
           else:
-            ##status=r"%s [%s]     " % (get_file_size(file_size_dl), (str(int(download_pct)) + "%"))
-            ##status = status + chr(8)*(len(status)+1)
-            ##print("\r" + status, end="")
-            print_status_msg(old_size, old_pct)
+            print_status_msg(file_size_dl_mb, download_pct)
             current_time=datetime.now()
             log_diff = current_time-previous_time
             if log_diff.seconds>0:
               previous_time=current_time
-      old_size = int(file_size_dl_mb)
-      old_pct = int(download_pct)
+
+    
     if p_display_status and p_json:
       json_dict.clear()
       if component_name is not None:
@@ -2012,10 +2009,11 @@ def http_get_file(p_json, p_file_name, p_url, p_out_dir, p_display_status, p_msg
     file_exists = False
     return(False)
   finally:
+    if file_size_dl_mb >=  1:
+      print_status_msg(file_size_dl_mb, 100)
     if file_exists and not f.closed:
       f.close()
 
-  print_status_msg(old_size, old_pct)
   delete_file(file_name_complete)
   f.close()
   os.rename(file_name_partial, file_name_complete)
@@ -2023,9 +2021,9 @@ def http_get_file(p_json, p_file_name, p_url, p_out_dir, p_display_status, p_msg
 
 
 def print_status_msg(p_mb, p_pct):
-  size_in_mb = int(p_mb)
-  pct_cmplt = int(p_pct)
-  print(str(size_in_mb) + " MB, [" + str(pct_cmplt) + "%]")
+  str_size_mb = str(p_mb)
+  pretty_size_mb = str_size_mb.rjust(5) + " MB"
+  print(pretty_size_mb + " [" + str(p_pct) + "%]")
 
 
 def is_writable(path):
