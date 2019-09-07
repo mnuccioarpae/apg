@@ -513,18 +513,18 @@ def get_relnotes(p_comp, p_ver=""):
   ver = ""
   if is_postgres(comp_name):
     if p_ver == "":
-      if p_comp == "pg10":
-        ver = "10.0"
+      if p_comp == "pg12":
+        ver = "12"
+      elif p_comp == "pg11":
+        ver = "11"
+      elif p_comp == "pg10":
+        ver = "10"
       elif p_comp == "pg96":
         ver = "9.6.0"
       elif p_comp == "pg95":
         ver = "9.5.0"
-      elif p_comp == "pg94":
+      else:
         ver = "9.4.0"
-      elif p_comp == "pg93":
-        ver = "9.3.0"
-      elif p_comp == "pg92":
-        ver = "9.2.0"
     else:
       ## remove the "-n" suffix
       ver = p_ver[:-2]
@@ -1671,7 +1671,7 @@ def get_default_pf():
 # return the BIGSQL platform
 ####################################################################################
 def get_pf():
-  return (get_value("GLOBAL", "PLATFORM", ""))
+  return (get_os())
 
 
 ####################################################################################
