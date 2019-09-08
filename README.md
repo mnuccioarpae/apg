@@ -1,6 +1,6 @@
-# README for PGCLI #
+# README for CLI2 #
 
-PGCLI is a PrettyGoodCommandLine interface for component control 
+CLI2 is a PrettyGoodCommandLine interface for component control 
   and management in PostgreSQL environments.  
 
 ## Usage ##
