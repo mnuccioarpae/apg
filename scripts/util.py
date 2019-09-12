@@ -1855,6 +1855,9 @@ def http_get_file(p_json, p_file_name, p_url, p_out_dir, p_display_status, p_msg
   file_name_partial = file_name_complete + ".part"
   json_dict = {}
   json_dict['state'] = "download"
+  file_size_dl = 0
+  file_size_dl_mb = 0
+
   if component_name is not None:
     json_dict['component'] = component_name
   if p_display_status:
@@ -1871,7 +1874,6 @@ def http_get_file(p_json, p_file_name, p_url, p_out_dir, p_display_status, p_msg
     else:
         file_size = int(meta.getheaders("Content-Length")[0])
 
-    file_size_dl = 0
     block_sz = 8192
     f = open(file_name_partial,"wb")
     file_exists = True
