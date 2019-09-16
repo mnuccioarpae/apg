@@ -1615,11 +1615,16 @@ def get_os():
       return "linux64"
 
     if os.path.exists("/etc/os-release"):
-      return "alpine64"
+      os_release_str = read_file_string("/etc/os-release")
+      if "Debian" in os_release_str:
+        return "linux64"
+      elif "Alpine" in os_releae_str:
+        return "alpine64"
 
   except Exception as e:
     pass
 
+  ## This is the deafult
   return ("linux64")
 
 
