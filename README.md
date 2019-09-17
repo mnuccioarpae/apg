@@ -1,11 +1,10 @@
-# README for CLI2 #
+# README for APG #
 
-CLI2 is a PrettyGoodCommandLine interface for component control 
-  and management in PostgreSQL environments.  
+APG is a A Pretty Good CLI for component control in PostgreSQL environments.  
 
 ## Usage ##
 ```
-pgc command [component] [options]
+apg command [component] [options]
 ```
 
 ## Informational Commands ##
