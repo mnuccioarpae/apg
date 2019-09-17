@@ -1,6 +1,6 @@
 # README for APG #
 
-APG is a A Pretty Good CLI for component control in PostgreSQL environments.  
+APG is a A-Pretty-Good command line interface for component control in PostgreSQL environments.  
 
 ## Usage ##
 ```
