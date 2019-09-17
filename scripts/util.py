@@ -46,6 +46,34 @@ PGC_HOME = os.getenv('PGC_HOME', '..' + os.sep + '..')
 pid_file = os.path.join(PGC_HOME, 'conf', 'pgc.pid')
 
 
+def run_regress (p_ver):
+  ver = "pg" + str(p_ver)
+
+  cmd = ""
+  cmd = cmd + "./pgc install " + ver
+  cmd = cmd + "; ./pgc start " + ver + " -y -d regression"
+
+  try:
+    c = cL.cursor()
+    sql = "SELECT component" + \
+          "  FROM versions" + \
+          " WHERE parent = ?" + \
+          "   AND is_current = 1"
+    c.execute(sql, [ver])
+    data = c.fetchall()
+    for row in data:
+      cmd = cmd + "; ./pgc install " + str(row[0]) + " -d regression"
+  except Exception as e:
+    fatal_sql_error(e, sql, "run_regress()")
+
+  cmd = cmd + "; ./pgc stop " + ver
+
+  print("\n" + cmd + "\n")
+  rc = os.system(cmd)
+
+  return(rc)
+  
+
 def run_pgc_cmd (p_cmd, p_display=False):
   cmd = PGC_HOME + os.sep + p_cmd
 

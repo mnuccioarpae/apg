@@ -77,7 +77,7 @@ ansi_escape = re.compile(r'\x1b[^m]*m')
 
 dep9 = util.get_depend()
 mode_list = ["start", "stop", "restart", "status", "list", "info", "update",
-             "upgrade", "enable", "disable", "install", "tune",
+             "upgrade", "enable", "disable", "install", "tune", "regress",
              "remove", "reload", "activity", "help", "get", "set", "unset",
              "repolist", "repo-pkgs", "discover", 
              "register", "top", "--autostart", "--relnotes",
@@ -88,8 +88,8 @@ mode_list = ["start", "stop", "restart", "status", "list", "info", "update",
 mode_list_advanced = ['kill', 'config', 'deplist', 'download', 'cancel',
                       'verify', 'init', 'clean', 'useradd', 'provision']
 
-ignore_comp_list = [
-  "get", "set", "unset", "register", "repolist", "repo-pkgs", "discover", "useradd"]
+ignore_comp_list = [ "get", "set", "unset", "register", "repolist", 
+                     "repo-pkgs", "discover", "useradd", "regress"]
 
 no_log_commands = ['status', 'info', 'list', 'activity', 'top', 'register',
                    'cancel', 'get']
@@ -2023,6 +2023,15 @@ try:
       print("ERROR: The UNSET command must have 2 parameters.")
       exit_cleanly(1)
     exit_cleanly(0)
+
+
+  ## REGRESS ############################################
+  if p_mode == 'regress':
+    if len(args) == 3:
+      exit_cleanly(util.run_regress(args[2]))
+    else:
+      print("ERROR: The REGRESS command must have 1 parameter (pgver).")
+      exit_cleanly(1)
 
 
   ## USERADD ############################################
