@@ -66,7 +66,7 @@ if util.get_value("GLOBAL", "PLATFORM", "") in ("", "posix", "windoze"):
   util.set_value("GLOBAL", "PLATFORM", util.get_default_pf())
 
 import apglog
-my_logger = logging.getLogger('apgli_logger')
+my_logger = logging.getLogger('apg_logger')
 
 if not util.is_admin() and util.get_platform() == "Windows":
   if meta.is_any_autostart():
@@ -1140,13 +1140,13 @@ if "--json" in args:
 if "--debug" in args:
   args.remove('--debug')
   my_logger.info("Enabling DEBUG mode")
-  logging.getLogger('apgli_logger').setLevel(logging.DEBUG)
+  logging.getLogger('apg_logger').setLevel(logging.DEBUG)
   my_logger.debug("DEBUG enabled")
 
 if "--debug2" in args:
   args.remove('--debug2')
   my_logger.info("Enabling DEBUG2 mode")
-  logging.getLogger('apgli_logger').setLevel(apglog.DEBUG2)
+  logging.getLogger('apg_logger').setLevel(apglog.DEBUG2)
   my_logger.debug("DEBUG enabled")
   my_logger.debug2("DEBUG2 enabled")
 

@@ -1,12 +1,12 @@
 
 ####################################################################
-#########            Copyright 2015 pgCentral            ###########
+#########         Copyright 2015-2019 BigSQL             ###########
 ####################################################################
 
 import os
 import sys
 
-LOG_FILENAME = os.getenv('PGC_LOGS')
+LOG_FILENAME = os.getenv('APG_LOGS')
 
 
 class ConsoleLogger(object):

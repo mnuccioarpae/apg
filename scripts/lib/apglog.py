@@ -38,12 +38,12 @@ def command(self, message, *args, **kws):
 ########                    MAINLINE                      ##########
 ####################################################################
 try:
-    LOG_FILENAME = os.getenv('PGC_LOGS')
+    LOG_FILENAME = os.getenv('APG_LOGS')
     if not LOG_FILENAME:
-        PGC_HOME = os.getenv("PGC_HOME")
-        LOG_FILENAME = os.path.join(PGC_HOME,"logs","pgcli_log.out")
+        APG_HOME = os.getenv("APG_HOME")
+        LOG_FILENAME = os.path.join(APG_HOME,"logs","apg_log.out")
     LOG_DIRECTORY = os.path.split(LOG_FILENAME)[0]
-    LOG_LEVEL = int(os.getenv('PGC_DEBUG_LEVEL', '-1'))
+    LOG_LEVEL = int(os.getenv('APG_DEBUG_LEVEL', '-1'))
 
     if LOG_LEVEL is None or LOG_LEVEL == -1:
         LOG_LEVEL = COMMAND
@@ -52,7 +52,7 @@ try:
       os.mkdir(LOG_DIRECTORY)
 
     # Set up a specific logger with our desired output level
-    my_logger = logging.getLogger('pgcli_logger')
+    my_logger = logging.getLogger('apg_logger')
 
     logging.addLevelName(COMMAND, "COMMAND")
     logging.Logger.command = command
