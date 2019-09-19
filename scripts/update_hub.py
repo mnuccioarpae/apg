@@ -61,7 +61,7 @@ def update_2_7_0():
           "  PRIMARY KEY (section, s_key) \n" + \
           ")")
 
-  repo = os.getenv('PGC_REPO', 'https://s3.amazonaws.com/pgcentral')
+  repo = os.getenv('APG_REPO', 'https://s3.amazonaws.com/pgcentral')
   run_sql("INSERT INTO settings VALUES ('GLOBAL', 'REPO', '" + repo + "')")
 
   ## default the new PLATFORM variable based on OS 
@@ -138,14 +138,11 @@ def mainline():
     update_3_1_1()
 
   if (p_from_ver < "3.2.1") and (p_to_ver >= "3.2.1"):
-    PGC_HOME = os.getenv('PGC_HOME', '')
+    APG_HOME = os.getenv('APG_HOME', '')
     try:
       import shutil
-      src = os.path.join(os.path.dirname(__file__), "pgc.sh")
-      dst = os.path.join(PGC_HOME, "pgc")
-      if platform.system() == "Windows":
-        src = os.path.join(os.path.dirname(__file__), "pgc.bat")
-        dst = os.path.join(PGC_HOME, "pgc.bat")
+      src = os.path.join(os.path.dirname(__file__), "apg.sh")
+      dst = os.path.join(APG_HOME, "apg")
       shutil.copy(src, dst)
     except Exception as e:
       pass
@@ -167,13 +164,13 @@ def mainline():
 ###################################################################
 #  MAINLINE
 ###################################################################
-PGC_HOME = os.getenv('PGC_HOME', '')
-if PGC_HOME == '':
-  print ("ERROR: Missing PGC_HOME envionment variable")
+APG_HOME = os.getenv('APG_HOME', '')
+if APG_HOME == '':
+  print ("ERROR: Missing APG_HOME envionment variable")
   sys.exit(1)
 
 ## gotta have a sqlite database to update
-db_local = PGC_HOME + os.sep + "conf" + os.sep + "pgc_local.db"
+db_local = APG_HOME + os.sep + "conf" + os.sep + "apg_local.db"
 cL = sqlite3.connect(db_local)
 
 if __name__ == '__main__':

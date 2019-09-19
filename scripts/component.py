@@ -10,9 +10,9 @@ def init_comp(p_comp, p_pidfile=''):
   print(" ")
   print("## initializing " + p_comp +  " ##################")
 
-  PGC_HOME = os.getenv('PGC_HOME', '')
+  APG_HOME = os.getenv('APG_HOME', '')
 
-  datadir = os.path.join(PGC_HOME, 'data', p_comp)
+  datadir = os.path.join(APG_HOME, 'data', p_comp)
   if os.path.isdir(datadir):
     print("## " + p_comp + " already configured.")
     return(1)
@@ -24,7 +24,7 @@ def init_comp(p_comp, p_pidfile=''):
     pidfilepath = os.path.join(datadir, p_pidfile)
     util.set_column("pidfile", p_comp, pidfilepath)
 
-  logdir = os.path.join(PGC_HOME, 'data', 'logs', p_comp)
+  logdir = os.path.join(APG_HOME, 'data', 'logs', p_comp)
   if not os.path.isdir(logdir):
     os.mkdir(logdir)
   util.set_column("logdir", p_comp, logdir)

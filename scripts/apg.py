@@ -34,14 +34,14 @@ import errno
 import traceback
 import argparse
 
-PGC_HOME=os.getenv('PGC_HOME')
+APG_HOME=os.getenv('APG_HOME')
 
 ## Our own library files ##########################################
 sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
 
-if os.path.exists(os.path.join(PGC_HOME, "python37")):
-  sys.path.append(os.path.join(PGC_HOME, "hub", "sripts"))
-  sys.path.append(os.path.join(PGC_HOME, "hub", "sripts", "lib"))
+if os.path.exists(os.path.join(APG_HOME, "python37")):
+  sys.path.append(os.path.join(APG_HOME, "hub", "sripts"))
+  sys.path.append(os.path.join(APG_HOME, "hub", "sripts", "lib"))
 
 this_platform_system = str(platform.system())
 platform_lib_path = os.path.join(os.path.dirname(__file__), 'lib', this_platform_system)
@@ -55,7 +55,7 @@ import logging.handlers
 from semantic_version import Version
 import mistune
 
-if not util.is_writable(os.path.join(os.getenv('PGC_HOME'), 'conf')):
+if not util.is_writable(os.path.join(os.getenv('APG_HOME'), 'conf')):
   print("You must run as administrator/root.")
   exit()
 
@@ -65,8 +65,8 @@ update_hub.verify_metadata()
 if util.get_value("GLOBAL", "PLATFORM", "") in ("", "posix", "windoze"):
   util.set_value("GLOBAL", "PLATFORM", util.get_default_pf())
 
-import pgclog
-my_logger = logging.getLogger('pgcli_logger')
+import apglog
+my_logger = logging.getLogger('apgli_logger')
 
 if not util.is_admin() and util.get_platform() == "Windows":
   if meta.is_any_autostart():
@@ -101,12 +101,12 @@ installed_comp_list = []
 global check_sum_match
 check_sum_match = True
 
-backup_dir = os.path.join(os.getenv('PGC_HOME'), 'conf', 'backup')
+backup_dir = os.path.join(os.getenv('APG_HOME'), 'conf', 'backup')
 backup_target_dir = os.path.join(backup_dir, time.strftime("%Y%m%d%H%M"))
 
-pid_file = os.path.join(os.getenv('PGC_HOME'), 'conf', 'pgc.pid')
+pid_file = os.path.join(os.getenv('APG_HOME'), 'conf', 'apg.pid')
 
-PGC_ISJSON = os.environ.get("PGC_ISJSON", "False")
+APG_ISJSON = os.environ.get("APG_ISJSON", "False")
 
 
 ###################################################################
@@ -152,7 +152,7 @@ def run_script(componentName, scriptName, scriptParm):
   componentDir = componentName
 
   cmd=""
-  scriptFile = os.path.join(PGC_HOME, componentDir, scriptName)
+  scriptFile = os.path.join(APG_HOME, componentDir, scriptName)
 
   if (os.path.isfile(scriptFile)):
     cmd = "bash"
@@ -343,7 +343,7 @@ def install_comp(p_app, p_ver=0, p_rver=None, p_re_install=False):
     try:
       tar.extractall(path=".")
     except KeyboardInterrupt as e:
-      temp_tar_dir = os.path.join(PGC_HOME, p_app)
+      temp_tar_dir = os.path.join(APG_HOME, p_app)
       util.delete_dir(temp_tar_dir)
       msg = "Unpacking cancelled for file %s" % file
       my_logger.error(msg)
@@ -358,7 +358,7 @@ def install_comp(p_app, p_ver=0, p_rver=None, p_re_install=False):
         return_code = 0
       util.exit_message(msg, return_code)
     except Exception as e:
-      temp_tar_dir = os.path.join(PGC_HOME, p_app)
+      temp_tar_dir = os.path.join(APG_HOME, p_app)
       util.delete_dir(temp_tar_dir)
       msg = "Unpacking failed for file %s" % str(e)
       my_logger.error(msg)
@@ -441,7 +441,7 @@ def upgrade_component(p_comp):
     run_script(p_comp, "stop-" + p_comp, "stop")
 
   if p_comp == "hub":
-    msg = "updating pgc from v" + present_version + "  to  v" + update_version
+    msg = "updating apg from v" + present_version + "  to  v" + update_version
   else:
     msg = "upgrading " + p_comp + " from (" + present_version + ") to (" + update_version + ")"
 
@@ -475,7 +475,7 @@ def upgrade_component(p_comp):
 
   if util.is_postgres(p_comp) and util.get_platform() == "Windows":
     print("Securing Windows directories...")
-    util.secure_win_dir(os.path.join(PGC_HOME, p_comp), "True", util.get_user())
+    util.secure_win_dir(os.path.join(APG_HOME, p_comp), "True", util.get_user())
     util.secure_win_dir(util.get_column("datadir", p_comp), "False", util.get_user())
     util.secure_win_dir(util.get_column("logdir", p_comp), "False", util.get_user())
 
@@ -504,7 +504,7 @@ def unpack_comp(p_app, p_old_ver, p_new_ver):
   base_name = p_app + "-" + meta.get_latest_ver_plat(p_app, p_new_ver)
 
   file = base_name + ".tar.bz2"
-  bz2_file = os.path.join(PGC_HOME, 'conf', 'cache', file)
+  bz2_file = os.path.join(APG_HOME, 'conf', 'cache', file)
 
   if os.path.exists(bz2_file) and is_downloaded(base_name, p_app):
     msg = "File is already downloaded."
@@ -582,9 +582,9 @@ def unpack_comp(p_app, p_old_ver, p_new_ver):
       parent = util.get_parent_component(p_app,0)
       if not os.path.exists(os.path.join(backup_target_dir, parent)):
         my_logger.info("backing up the parent component %s " % parent)
-        copytree(os.path.join(PGC_HOME, parent), os.path.join(backup_target_dir, parent))
+        copytree(os.path.join(APG_HOME, parent), os.path.join(backup_target_dir, parent))
       manifest_file_name = p_app + ".manifest"
-      manifest_file_path = os.path.join(PGC_HOME, "conf", manifest_file_name)
+      manifest_file_path = os.path.join(APG_HOME, "conf", manifest_file_name)
       my_logger.info("backing up current manifest file " + manifest_file_path)
       copy2(manifest_file_path, backup_target_dir)
       my_logger.info("deleting existing extension files from " + parent)
@@ -616,14 +616,14 @@ def unpack_comp(p_app, p_old_ver, p_new_ver):
         os.mkdir(backup_target_dir)
       if not os.path.exists(os.path.join(backup_target_dir, p_app)):
         my_logger.info("backing up the old version of %s " % p_app)
-        copytree(os.path.join(PGC_HOME, p_app), os.path.join(backup_target_dir, p_app))
+        copytree(os.path.join(APG_HOME, p_app), os.path.join(backup_target_dir, p_app))
       msg = p_app + " upgrade staged for completion."
       my_logger.info(msg)
       if p_app in ('hub'):
         if util.get_platform() == "Windows":
-          copy2(os.path.join(PGC_HOME, "pgc.bat"), backup_target_dir)
+          copy2(os.path.join(APG_HOME, "apg.bat"), backup_target_dir)
         else:
-          copy2(os.path.join(PGC_HOME, "pgc"), backup_target_dir)
+          copy2(os.path.join(APG_HOME, "apg"), backup_target_dir)
         os.rename(new_comp_dir, "hub_new")
         ## run the update_hub script in the _new directory
         upd_hub_cmd = sys.executable + " hub_new" + os.sep + "hub" + os.sep + "scripts" + os.sep + "update_hub.py "
@@ -632,9 +632,9 @@ def unpack_comp(p_app, p_old_ver, p_new_ver):
         my_logger.info("renaming the existing folder %s" % p_app)
         os.rename(p_app, p_app+"_old")
         my_logger.info("copying the new files to folder %s" % p_app)
-        copytree(os.path.join(PGC_HOME, new_comp_dir, p_app), os.path.join(PGC_HOME, p_app))
+        copytree(os.path.join(APG_HOME, new_comp_dir, p_app), os.path.join(APG_HOME, p_app))
         my_logger.info("Restoring the conf and extension files if any")
-        util.restore_conf_ext_files(os.path.join(PGC_HOME, p_app+"_old"), os.path.join(PGC_HOME, p_app))
+        util.restore_conf_ext_files(os.path.join(APG_HOME, p_app+"_old"), os.path.join(APG_HOME, p_app))
         my_logger.info(p_app + " upgrade completed.")
     except Exception as upgrade_exception:
       error_msg = "Error while upgrading the " + p_app + " : " + str(upgrade_exception)
@@ -650,10 +650,10 @@ def unpack_comp(p_app, p_old_ver, p_new_ver):
         print(error_msg)
       return_value = 1
 
-  if os.path.exists(os.path.join(PGC_HOME, new_comp_dir)):
-    util.delete_dir(os.path.join(PGC_HOME, new_comp_dir))
-  if os.path.exists(os.path.join(PGC_HOME, old_comp_dir)):
-    util.delete_dir(os.path.join(PGC_HOME, old_comp_dir))
+  if os.path.exists(os.path.join(APG_HOME, new_comp_dir)):
+    util.delete_dir(os.path.join(APG_HOME, new_comp_dir))
+  if os.path.exists(os.path.join(APG_HOME, old_comp_dir)):
+    util.delete_dir(os.path.join(APG_HOME, old_comp_dir))
 
   return return_value
 
@@ -672,7 +672,7 @@ def remove_comp(p_comp):
   if meta.is_extension(p_comp):
     run_script(meta.get_extension_parent(p_comp), script_name, "")
     manifest_file_name = p_comp + ".manifest"
-    manifest_file_path = os.path.join(PGC_HOME, "conf", manifest_file_name)
+    manifest_file_path = os.path.join(APG_HOME, "conf", manifest_file_name)
     util.delete_extension_files(manifest_file_path)
     my_logger.info("deleted manifest file : " + manifest_file_name )
     os.remove(manifest_file_path)
@@ -830,10 +830,10 @@ def retrieve_remote():
     os.mkdir(backup_dir)
   if not os.path.exists(backup_target_dir):
     os.mkdir(backup_target_dir)
-  recent_version_sql = os.path.join(PGC_HOME, 'conf', 'versions.sql')
-  recent_pgc_local_db = os.path.join(PGC_HOME, 'conf', 'pgc_local.db')
-  if os.path.exists(recent_pgc_local_db):
-    copy2(recent_pgc_local_db, backup_target_dir)
+  recent_version_sql = os.path.join(APG_HOME, 'conf', 'versions.sql')
+  recent_apg_local_db = os.path.join(APG_HOME, 'conf', 'apg_local.db')
+  if os.path.exists(recent_apg_local_db):
+    copy2(recent_apg_local_db, backup_target_dir)
   if os.path.exists(recent_version_sql):
     copy2(recent_version_sql, backup_target_dir)
   remote_file = util.get_versions_sql()
@@ -1065,38 +1065,25 @@ def exit_cleanly(p_rc):
   sys.exit(p_rc)
 
 
-def pgc_lock():
+def apg_lock():
   try:
     fd = os.open(pid_file, os.O_RDONLY)
     ret = os.read(fd,12)
-    pgc_pid = ret.decode()
+    apg_pid = ret.decode()
     os.close(fd)
   except IOError as e:
     return False
   except OSError as e:
     return False
-  if not pgc_pid:
+
+  if not apg_pid:
     return False
-  if util.get_platform() == "Windows":
-    try:
-      ps = subprocess.Popen('tasklist.exe /NH /FI "PID eq %s"' % pgc_pid, shell=True, stdout=subprocess.PIPE)
-      ret = ps.stdout.read()
-      output = ret.decode()
-      ps.stdout.close()
-      ps.wait()
-      if pgc_pid in output:
-        return True
-    except Exception as e:
-      my_logger.error("Error while checking for lock with command " + p_mode + " : " + str(e))
-      my_logger.error(traceback.format_exc())
-      return False
-  else:
-    try:
-      os.kill(int(pgc_pid), 0)
-    except OSError as e:
-      return False
-    else:
-      return True
+
+  try:
+    os.kill(int(apg_pid), 0)
+  except OSError as e:
+    return False
+
   return False
 
 
@@ -1107,9 +1094,9 @@ def pgc_lock():
 ## Initialize Globals ##############################################
 REPO=util.get_value('GLOBAL', 'REPO')
 
-os.chdir(PGC_HOME)
+os.chdir(APG_HOME)
 
-db_local = "conf" + os.sep + "pgc_local.db"
+db_local = "conf" + os.sep + "apg_local.db"
 connL = sqlite3.connect(db_local)
 
 ## eliminate empty parameters #################
@@ -1123,13 +1110,13 @@ full_cmd_line = " ".join(args[1:])
 
 ## validate inputs ###########################################
 if len(args) == 1:
-  api.info(False, PGC_HOME, REPO)
+  api.info(False, APG_HOME, REPO)
   print(" ")
   print(get_help_text())
   exit_cleanly(0)
 
 if ((args[1] == "--version") or (args[1] == "-v")):
-  print("v" + util.get_pgc_version())
+  print("v" + util.get_apg_version())
   exit_cleanly(0)
 
 p_mode = ""
@@ -1153,13 +1140,13 @@ if "--json" in args:
 if "--debug" in args:
   args.remove('--debug')
   my_logger.info("Enabling DEBUG mode")
-  logging.getLogger('pgcli_logger').setLevel(logging.DEBUG)
+  logging.getLogger('apgli_logger').setLevel(logging.DEBUG)
   my_logger.debug("DEBUG enabled")
 
 if "--debug2" in args:
   args.remove('--debug2')
   my_logger.info("Enabling DEBUG2 mode")
-  logging.getLogger('pgcli_logger').setLevel(pgclog.DEBUG2)
+  logging.getLogger('apgli_logger').setLevel(apglog.DEBUG2)
   my_logger.debug("DEBUG enabled")
   my_logger.debug2("DEBUG2 enabled")
 
@@ -1255,22 +1242,22 @@ if (p_mode in no_log_commands) and (isJSON == True):
   pass
 else:
   #my_logger.setLevel(COMMAND)
-  #my_logger.log(COMMAND,"pgc %s ", full_cmd_line)
-  my_logger.command("pgc %s", full_cmd_line)
+  #my_logger.log(COMMAND,"apg %s ", full_cmd_line)
+  my_logger.command("apg %s", full_cmd_line)
 
 if not is_valid_mode(p_mode):
   util.exit_message("Invalid option or command", 1, isJSON)
 
 if p_mode in lock_commands:
-  if pgc_lock():
-    msg = "Unable to execute '{0}', another pgc instance may be running. \n" \
+  if apg_lock():
+    msg = "Unable to execute '{0}', another apg instance may be running. \n" \
           "HINT: Delete the lock file: '{1}' if no other instance is running.".format(p_mode, pid_file)
     if isJSON:
       msg = '[{"state":"locked","msg":"' + msg + '"}]'
     util.exit_message(msg, 0)
-  pgc_pid_fd = open(pid_file, 'w')
-  pgc_pid_fd.write(str(os.getpid()))
-  pgc_pid_fd.close()
+  apg_pid_fd = open(pid_file, 'w')
+  apg_pid_fd.write(str(os.getpid()))
+  apg_pid_fd.close()
 
 p_comp_list=[]
 extra_args=""
@@ -1328,7 +1315,7 @@ try:
     elif len(args) == 3:
       verList = [args[2]]
     else:
-      util.exit_message("try:  pgc discover [ " + str(vList) + " ]", 1, isJSON)
+      util.exit_message("try:  apg discover [ " + str(vList) + " ]", 1, isJSON)
 
     pgdg_comps = []
     for v in verList:
@@ -1341,10 +1328,10 @@ try:
       if rc in (0,4):
         pgdg_comps.append({'version': v, 'comp': comp})
         if rc == 0:
-          pgc_pid_fd = open(pid_file, 'w')
-          pgc_pid_fd.write(str(os.getpid()))
-          pgc_pid_fd.close()
-          msg = "Installing pgc controller for existing {0} instance.".format(comp)
+          apg_pid_fd = open(pid_file, 'w')
+          apg_pid_fd.write(str(os.getpid()))
+          apg_pid_fd.close()
+          msg = "Installing apg controller for existing {0} instance.".format(comp)
           if not isJSON:
             print (msg)
           install_comp(comp, p_re_install=True)
@@ -1374,8 +1361,8 @@ try:
       if args[3] == "remove":
         exit_cleanly(repo.remove_packages(args[2], args[4:], isJSON))
 
-    error_msg = "try: ./pgc repo-pkgs <repo-id> list\n" + \
-                "            ./pgc repo-pkgs <repo-id> [install | remove] <pkg-list>"
+    error_msg = "try: ./apg repo-pkgs <repo-id> list\n" + \
+                "            ./apg repo-pkgs <repo-id> [install | remove] <pkg-list>"
     util.exit_message(error_msg, 1, isJSON)
 
 
@@ -1405,8 +1392,8 @@ try:
     args = unknown_args
 
     mode_types = "REPO"
-    bad_reg_msg = "try: pgc " + p_mode + " [" + mode_types + \
-      "] [id pgc_home [name] [group]]"
+    bad_reg_msg = "try: apg " + p_mode + " [" + mode_types + \
+      "] [id apg_home [name] [group]]"
 
     try:
       reg = str(args[2]).upper()
@@ -1457,7 +1444,7 @@ try:
   ## INFO ######################################################################################
   if (p_mode == 'info'):
     if(p_comp=="all" and info_arg==0):
-      api.info(isJSON, PGC_HOME, REPO)
+      api.info(isJSON, APG_HOME, REPO)
     else:
       try:
         c = connL.cursor()
@@ -1608,7 +1595,7 @@ try:
               is_running = check_comp(comp, port, 0, True)
               if is_running == "NotInitialized":
                 compDict['available_port'] = util.get_avail_port("PG Port", port, comp, isJSON=True)
-                compDict['available_datadir'] = os.path.join(PGC_HOME, "data", comp)
+                compDict['available_datadir'] = os.path.join(APG_HOME, "data", comp)
                 compDict['port'] = 0
               compDict['status'] = is_running
               compDict['current_logfile'] = ""
@@ -1633,7 +1620,7 @@ try:
 
   ## CLEAN ####################################################
   if (p_mode == 'clean'):
-    conf_cache = PGC_HOME + os.sep + "conf" + os.sep + "cache" + os.sep + "*"
+    conf_cache = APG_HOME + os.sep + "conf" + os.sep + "cache" + os.sep + "*"
     files = glob.glob(conf_cache)
     for f in files:
       os.remove(f)
@@ -1780,7 +1767,7 @@ try:
           component_installed = True
           installed_commponents.append(c)
           if isExt:
-            util.delete_dir(os.path.join(PGC_HOME, c))
+            util.delete_dir(os.path.join(APG_HOME, c))
         else:
           dependent_components.append(c)
 
@@ -1788,7 +1775,7 @@ try:
 
 
   # Verify data & log directories ############################
-  data_home = PGC_HOME + os.sep + 'data'
+  data_home = APG_HOME + os.sep + 'data'
   if not os.path.exists(data_home):
     os.mkdir(data_home)
     data_logs = data_home + os.sep + 'logs'

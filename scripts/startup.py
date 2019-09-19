@@ -40,7 +40,7 @@ def useradd_linux(p_user):
 def config_linux(p_comp, p_systemsvc, p_S, p_K, p_svc_user, p_start, p_start_log,
                    p_stop, p_reload, p_status="", is_pg=True, p_env=None):
 
-  pgc_home = os.getenv("PGC_HOME")
+  apg_home = os.getenv("APG_HOME")
 
   if util.is_systemd():
     sys_svc_file = os.path.join(util.get_systemd_dir(), p_systemsvc + ".service")
@@ -50,7 +50,7 @@ def config_linux(p_comp, p_systemsvc, p_S, p_K, p_svc_user, p_start, p_start_log
   print(p_comp + " config autostart " + sys_svc_file)
 
   if not util.is_systemd():
-    svcfile = os.path.join(pgc_home, p_comp, p_systemsvc)
+    svcfile = os.path.join(apg_home, p_comp, p_systemsvc)
     write_sysv_svcfile(svcfile, p_systemsvc, p_S, p_K, p_svc_user,
                          p_start, p_start_log, p_stop, p_reload, p_status)
     rc = util.run_sudo("ln -sf " + svcfile + " " + sys_svc_file)

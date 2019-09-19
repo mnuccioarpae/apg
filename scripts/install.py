@@ -3,11 +3,11 @@
 ##################################################################
 
 import sys, os
-PGC_VER="4.3.2"
-PGC_REPO=os.getenv("PGC_REPO", "https://s3.amazonaws.com/pgcentral")
+APG_VER="5.0.0"
+APG_REPO=os.getenv("APG_REPO", "https://s3.amazonaws.com/pgcentral")
   
-if sys.version_info < (2, 6):
-  print("ERROR: BigSQL requires Python 2.6 or greater")
+if sys.version_info < (2, 7):
+  print("ERROR: BigSQL requires Python 2.7 or greater")
   sys.exit(1)
 
 try:
@@ -28,14 +28,14 @@ if os.path.exists("bigsql"):
   print("ERROR: Cannot install over an existing 'bigsql' directory.")
   sys.exit(1)
 
-pgc_file="bigsql-pgc-" + PGC_VER + ".tar.bz2"
-f = PGC_REPO + "/" + pgc_file
+apg_file="bigsql-apg-" + APG_VER + ".tar.bz2"
+f = APG_REPO + "/" + apg_file
 
-if not os.path.exists(pgc_file):
-  print("\nDownloading BigSQL PGC " + PGC_VER + " ...")
+if not os.path.exists(apg_file):
+  print("\nDownloading BigSQL APG " + APG_VER + " ...")
   try:
     fu = urllib2.urlopen(f)
-    local_file = open(pgc_file, "wb")
+    local_file = open(apg_file, "wb")
     local_file.write(fu.read())
     local_file.close()
   except Exception as e:
@@ -44,20 +44,20 @@ if not os.path.exists(pgc_file):
 
 print("\nUnpacking ...")
 try:
-  tar = tarfile.open(pgc_file)
+  tar = tarfile.open(apg_file)
   tar.extractall(path=".")
   print("\nCleaning up")
   tar.close()
-  os.remove(pgc_file)
+  os.remove(apg_file)
 except Exception as e:
   print("ERROR: Unable to unpack \n" + str(e))
   sys.exit(1)
 
-print("\nSetting REPO to " + PGC_REPO)
-pgc_cmd = "bigsql" + os.sep + "pgc"
-os.system(pgc_cmd + " set GLOBAL REPO " + PGC_REPO)
+print("\nSetting REPO to " + APG_REPO)
+apg_cmd = "bigsql" + os.sep + "apg"
+os.system(apg_cmd + " set GLOBAL REPO " + APG_REPO)
 
-print("\nBigSQL PGC installed.  Try '" + pgc_cmd + " help' to get started.\n")
+print("\nBigSQL APG installed.  Try '" + apg/cmd + " help' to get started.\n")
 
 sys.exit(0)
 
