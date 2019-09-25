@@ -1858,7 +1858,7 @@ def delete_file(p_file_name):
 def http_is_file(p_url):
   try:
     req = urllib2.Request(p_url, None, http_headers())
-    u = urllib2.urlopen(req, timeout=10)
+    u = urllib2.urlopen(req, timeout=100)
   except KeyboardInterrupt as e:
     sys.exit(1)
   except Exception as e:
@@ -1897,7 +1897,7 @@ def http_get_file(p_json, p_file_name, p_url, p_out_dir, p_display_status, p_msg
     delete_file(file_name_partial)
     file_url = p_url + '/' + p_file_name
     req = urllib2.Request(file_url, None, http_headers())
-    u = urllib2.urlopen(req, timeout=10)
+    u = urllib2.urlopen(req, timeout=100)
     meta = u.info()
     if isPy3:
         file_size = int(meta.get_all("Content-Length")[0])
